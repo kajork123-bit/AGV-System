@@ -1,0 +1,1782 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0052)file:///C:/Users/User/Desktop/AGV%20PM%20System.html -->
+<html lang="th"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGV PM System v2</title>
+<link href="./AGV PM System_files/css2" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;
+  --border:#30363d;--text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
+  --accent:#00d4aa;--accent2:#0099ff;--accent4:#ffa657;
+  --success:#3fb950;--warning:#d29922;--danger:#f85149;--purple:#bc8cff;
+  --shadow:0 4px 24px rgba(0,0,0,.4);--r:12px;--r2:8px;
+}
+.light{
+  --bg:#f0f4f8;--bg2:#fff;--bg3:#e8edf3;--bg4:#d0d7de;
+  --border:#d0d7de;--text:#1c2128;--text2:#57606a;--text3:#8c959f;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;font-size:15px}
+
+/* ── Sidebar ── */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;transition:all .3s}
+.logo{padding:18px 18px 14px;border-bottom:1px solid var(--border)}
+.logo-tag{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:3px;text-transform:uppercase}
+.logo-title{font-size:19px;font-weight:800;color:var(--text);line-height:1.2;margin-top:3px}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.nav{padding:10px 0;flex:1;overflow-y:auto}
+.nav-section{padding:10px 16px 4px;font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--text2);font-size:14px;border-left:3px solid transparent;transition:all .15s;position:relative}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(0,212,170,.08);color:var(--accent);border-left-color:var(--accent)}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-badge{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border)}
+.theme-toggle{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:12px;color:var(--text2);display:flex;gap:6px;align-items:center;transition:all .2s;width:100%;justify-content:center}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── Main ── */
+.main{margin-left:240px;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;transition:background .3s}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.page-title{font-size:17px;font-weight:700}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.content{padding:20px 24px}
+
+/* ── Alert Banner ── */
+.alert-banner{background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);border-radius:var(--r2);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px}
+.alert-banner.warn{background:rgba(210,153,34,.1);border-color:rgba(210,153,34,.3);color:var(--warning)}
+.alert-banner.danger{color:var(--danger)}
+
+/* ── Cards ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.05);transition:all .3s ease;margin-bottom:18px;animation:slideInUp .5s ease-out}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);border-color:var(--accent2)}
+.card-title{font-size:13px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:1px;margin-bottom:0;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:2px solid var(--border)}
+.card-title .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+
+/* ── Stats ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+@media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.stats-grid{grid-template-columns:1fr}}
+@keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(248,81,73,.7)}50%{box-shadow:0 0 0 10px rgba(248,81,73,0)}}
+.stat-card{background:var(--bg2);border:2px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;transition:all .3s ease;cursor:default;box-shadow:0 2px 8px rgba(0,0,0,.1);animation:slideInUp .5s ease-out}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.stat-card.green::before{background:linear-gradient(90deg,var(--success),rgba(63,185,80,.5))}
+.stat-card.blue::before{background:linear-gradient(90deg,var(--accent2),rgba(0,153,255,.5))}
+.stat-card.orange::before{background:linear-gradient(90deg,var(--accent4),rgba(255,166,87,.5))}
+.stat-card.red::before{background:linear-gradient(90deg,var(--danger),rgba(248,81,73,.5))}
+.stat-card.red{border-color:var(--danger)}
+.stat-label{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat-val{font-family:'Space Mono',monospace;font-size:32px;font-weight:800}
+.stat-card.green .stat-val{color:var(--success)}
+.stat-card.blue .stat-val{color:var(--accent2)}
+.stat-card.orange .stat-val{color:var(--accent4)}
+.stat-card.red .stat-val{color:var(--danger)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:6px;font-weight:500}
+.stat-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:36px;opacity:.12;transition:all .3s}
+.stat-card:hover .stat-icon{opacity:.2;transform:translateY(-50%) scale(1.1)}
+.stat-card.alert{animation:pulse 2s infinite}
+
+/* ── Grids ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1200px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* ── Btn ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--r2);font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .3s cubic-bezier(.4,0,.2,1);white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:#0d1117;font-weight:700}
+.btn-primary:hover{background:#00b894;box-shadow:0 4px 12px rgba(0,184,148,.3);transform:translateY(-2px)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent2);background:var(--bg2);color:var(--accent2);box-shadow:0 2px 8px rgba(0,153,255,.2)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{opacity:.85;box-shadow:0 4px 12px rgba(248,81,73,.3)}
+.btn-warning{background:var(--accent4);color:#0d1117}
+.btn-warning:hover{opacity:.85;box-shadow:0 4px 12px rgba(255,166,87,.3)}
+.btn-purple{background:var(--purple);color:#0d1117}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px}
+
+/* ── Badge ── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.bg{background:rgba(63,185,80,.15);color:var(--success)}
+.br{background:rgba(248,81,73,.15);color:var(--danger)}
+.by{background:rgba(210,153,34,.15);color:var(--warning)}
+.bb{background:rgba(0,153,255,.15);color:var(--accent2)}
+.bp{background:rgba(188,140,255,.15);color:var(--purple)}
+.ba{background:rgba(0,212,170,.15);color:var(--accent)}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:12px;font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--border);background:var(--bg3)}
+td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;transition:background .2s}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(0,212,170,.08)}
+
+/* ── Form ── */
+.fg{margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+input,select,textarea{width:100%;padding:10px 12px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--r2);color:var(--text);font-family:'Sarabun',sans-serif;font-size:14px;transition:all .3s ease;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent2);background:var(--bg2);box-shadow:0 0 0 3px rgba(0,153,255,.1)}
+textarea{resize:vertical;min-height:70px}
+input[type=file]{padding:6px 10px;font-size:12px}
+
+/* ── Checklist ── */
+.ci{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:var(--r2);border:1px solid var(--border);margin-bottom:7px;background:var(--bg3);transition:all .2s}
+.ci:hover{border-color:var(--accent2)}
+.ci.ok{border-color:var(--success);background:rgba(63,185,80,.05)}
+.ci.fail{border-color:var(--danger);background:rgba(248,81,73,.05)}
+.ci-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);min-width:22px;font-weight:700;padding-top:2px}
+.ci-body{flex:1}
+.ci-text{font-size:13px;line-height:1.5;color:var(--text)}
+.ci-actions{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.s-btn{padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid transparent;transition:all .15s;background:transparent}
+.s-btn.ok{border-color:var(--success);color:var(--success)}
+.s-btn.ok.a{background:var(--success);color:#fff}
+.s-btn.fail{border-color:var(--danger);color:var(--danger)}
+.s-btn.fail.a{background:var(--danger);color:#fff}
+.s-btn.na{border-color:var(--text3);color:var(--text3)}
+.s-btn.na.a{background:var(--text3);color:#fff}
+
+/* ── Charts ── */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding:12px 0}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}
+.bc{flex:1;display:flex;align-items:flex-end;width:100%}
+.bar{width:100%;border-radius:6px 6px 0 0;transition:all .5s cubic-bezier(.4,0,.2,1);min-height:4px;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.bar:hover{filter:brightness(1.1)}
+.bl{font-size:9px;color:var(--text3)}
+.bv{font-size:10px;font-weight:700;color:var(--text2)}
+
+/* ── Progress ── */
+.pb{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:6px}
+.pf{height:100%;border-radius:3px;transition:width .5s}
+
+/* ── Modal ── */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(5px);animation:fadeIn .2s ease}
+.mo.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.md{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:28px;width:90%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 80px rgba(0,0,0,.35);animation:slideInUp .3s cubic-bezier(.4,0,.2,1)}
+.md-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.md-title{font-size:18px;font-weight:700}
+.md-x{background:none;border:none;cursor:pointer;color:var(--text2);font-size:18px;padding:6px 8px;border-radius:4px;transition:all .2s}
+.md-x:hover{background:var(--bg3);color:var(--danger)}
+
+/* ── Toast ── */
+.tc{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px}
+.toast{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:12px 16px;display:flex;align-items:center;gap:12px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:slideInUp .3s ease;min-width:260px}
+@keyframes ti{from{transform:translateX(50px);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.success{border-left:4px solid var(--success)}
+.toast.error{border-left:4px solid var(--danger)}
+.toast.info{border-left:4px solid var(--accent2)}
+.toast.warn{border-left:4px solid var(--warning)}
+
+/* ── Pages ── */
+.page{display:none;padding:24px 28px}
+.page.active{display:block;animation:slideInUp .4s ease-out}
+.divider{height:1px;background:var(--border);margin:20px 0}
+
+/* ── AGV Chip ── */
+.agv-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--border);cursor:pointer;background:var(--bg3);color:var(--text2);transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.agv-chip:hover{background:var(--bg);border-color:var(--accent);color:var(--accent)}
+.agv-chip.active{background:var(--accent);color:#0d1117;border-color:var(--accent)}
+.agv-chip.warn{border-color:var(--warning);color:var(--warning)}
+.agv-chip.danger{border-color:var(--danger);color:var(--danger)}
+
+/* ── AGV Card ── */
+.agv-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:14px;transition:all .2s;cursor:pointer}
+.agv-card:hover{border-color:var(--accent);background:var(--bg2)}
+.agv-card.overdue{border-color:var(--danger)}
+.agv-card.warn{border-color:var(--warning)}
+
+/* ── Signature ── */
+.sig-box{border:1px dashed var(--border);border-radius:var(--r2);background:var(--bg3);height:100px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:12px;cursor:pointer;position:relative;overflow:hidden}
+canvas.sig-canvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* ── Image Preview ── */
+.img-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.img-thumb{width:70px;height:70px;border-radius:6px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+.img-del{position:relative;display:inline-block}
+.img-del-btn{position:absolute;top:-6px;right:-6px;background:var(--danger);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ── Day box ── */
+.day-box{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;font-size:10px;font-weight:700;cursor:default}
+.day-box.has-pm{background:rgba(0,212,170,.15);color:var(--accent);border:1px solid rgba(0,212,170,.3)}
+.day-box.no-pm{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+.day-box.has-issue{background:rgba(248,81,73,.15);color:var(--danger);border:1px solid rgba(248,81,73,.3)}
+.day-box.today{box-shadow:0 0 0 2px var(--accent2)}
+.day-box.empty{border:none;background:transparent}
+
+/* ── MTBF card ── */
+.metric-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.metric-row:last-child{border-bottom:none}
+
+/* ── Mobile ── */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);z-index:200;padding:6px 0 env(safe-area-inset-bottom,0)}
+.mob-nav-inner{display:flex;justify-content:space-around}
+.mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 10px;cursor:pointer;color:var(--text3);font-size:10px;font-weight:600;border-radius:8px;transition:all .2s;position:relative}
+.mob-nav-item.active{color:var(--accent)}
+.mob-nav-item .icon{font-size:18px}
+.mob-badge{position:absolute;top:2px;right:6px;background:var(--danger);color:#fff;font-size:9px;font-weight:700;padding:0 4px;border-radius:8px}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding-bottom:70px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .mob-nav{display:block}
+  .topbar{padding:10px 16px}
+  .content{padding:14px 16px}
+}
+@media(min-width:769px){
+  .mob-menu-btn{display:none}
+}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+</style>
+</head>
+<body class="light">
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-tag">v2.0 PRO</div>
+    <div class="logo-title">AGV PM</div>
+    <div class="logo-sub">Preventive Maintenance</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">หลัก</div>
+    <div class="nav-item" onclick="showPage(&#39;dashboard&#39;)">
+      <span class="icon">📊</span><span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="showPage(&#39;pm-form&#39;)">
+      <span class="icon">🔧</span><span>บันทึก PM ใหม่</span>
+    </div>
+    <div class="nav-item" onclick="showPage(&#39;history&#39;)">
+      <span class="icon">📋</span><span>ประวัติ PM</span>
+    </div>
+    <div class="nav-section">ระบบ</div>
+    <div class="nav-item active" onclick="showPage(&#39;problems&#39;)">
+      <span class="icon">⚠️</span><span>ปัญหาที่พบ</span>
+      <span class="nav-badge" id="prob-badge" style="display: none;">0</span>
+    </div>
+    <div class="nav-item" onclick="showPage(&#39;agv-manage&#39;)">
+      <span class="icon">🤖</span><span>จัดการ AGV</span>
+    </div>
+    <div class="nav-item" onclick="showPage(&#39;stats&#39;)">
+      <span class="icon">📈</span><span>สถิติ MTBF/MTTR</span>
+    </div>
+    
+    <div class="nav-item" onclick="showPage(&#39;export&#39;)">
+      <span class="icon">📤</span><span>Export ข้อมูล</span>
+    </div>
+    <div class="nav-item" onclick="showPage(&#39;backup&#39;)">
+      <span class="icon">💾</span><span>Backup / Restore</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <button type="button" class="theme-toggle" onclick="toggleTheme()">
+      <span id="ti">🌙</span><span id="tt">โหมด Dark</span>
+    </button>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button type="button" class="btn btn-secondary btn-sm mob-menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pt">ปัญหาที่พบ</div>
+    </div>
+    <div class="topbar-actions">
+      <span id="overdue-topbar" style="display:none" class="badge br">⚠️ 0 เครื่อง PM เกินกำหนด</span>
+      <button type="button" class="btn btn-primary btn-sm" onclick="showPage(&#39;pm-form&#39;)">+ บันทึก PM</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- ════ DASHBOARD ════ -->
+    <div class="page" id="page-dashboard">
+      <!-- Quick Actions Header -->
+      <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:200px">
+          <h2 style="font-size:24px;font-weight:800;color:var(--text);margin:0;display:flex;align-items:center;gap:8px">📊 Dashboard</h2>
+          <p style="font-size:12px;color:var(--text3);margin:4px 0 0">ภาพรวม AGV PM System</p>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="showPage(&#39;pm-form&#39;)" style="white-space:nowrap">+ บันทึก PM ใหม่</button>
+        <button type="button" class="btn btn-secondary" onclick="showPage(&#39;problems&#39;)" style="white-space:nowrap">⚠️ ดูปัญหา</button>
+        <button type="button" class="btn btn-secondary" onclick="showPage(&#39;stats&#39;)" style="white-space:nowrap">📈 สถิติ</button>
+      </div>
+
+      <div id="alert-area" style="margin-bottom:16px"></div>
+
+      <!-- Key Metrics Section Header -->
+      <div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px">📈 ตัวชี้วัดหลัก</div></div>
+      <div class="stats-grid">
+        <div class="stat-card green"><div class="stat-label">PM เดือนนี้</div><div class="stat-val" id="s-month">0</div><div class="stat-sub">ครั้ง</div><div class="stat-icon">✅</div></div>
+        <div class="stat-card blue"><div class="stat-label">AGV ทั้งหมด</div><div class="stat-val" id="s-agv">0</div><div class="stat-sub">เครื่อง</div><div class="stat-icon">🤖</div></div>
+        <div class="stat-card orange"><div class="stat-label">ปัญหาเปิดอยู่</div><div class="stat-val" id="s-prob">0</div><div class="stat-sub">รายการ</div><div class="stat-icon">⚠️</div></div>
+        <div class="stat-card red" id="stat-od-card"><div class="stat-label">PM เกินกำหนด</div><div class="stat-val" id="s-od">0</div><div class="stat-sub">เครื่อง</div><div class="stat-icon">🔴</div></div>
+      </div>
+      <!-- Trends & Calendar -->
+      <div style="margin-bottom:12px;margin-top:24px"><div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px">📈 แนวโน้มและปฏิทิน</div></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>PM รายสัปดาห์ (7 วันล่าสุด)</div>
+          <div class="bar-chart" id="wchart" style="margin-top:8px"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>ปฏิทิน PM เดือนนี้</div>
+          <div id="mcal" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- Status & Issues -->
+      <div style="margin-bottom:12px;margin-top:24px"><div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px">🔍 สถานะและปัญหา</div></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>สถานะ AGV แต่ละเครื่อง</div>
+          <div id="agv-status" style="margin-top:8px"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>ปัญหาล่าสุด (ยังเปิดอยู่)</div>
+          <div id="rec-probs" style="margin-top:8px"><div style="text-align:center;padding:24px;color:var(--text3)">🎉 ไม่มีปัญหาที่เปิดอยู่</div></div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div style="margin-bottom:12px;margin-top:24px"><div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px">⏱️ กิจกรรมล่าสุด</div></div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>PM ล่าสุด 5 รายการ</div>
+        <div class="tbl-wrap" style="margin-top:8px"><table>
+          <thead><tr><th>วันที่</th><th>AGV</th><th>ช่าง</th><th>ผ่าน/ทั้งหมด</th><th>ปัญหา</th><th>สถานะ</th></tr></thead>
+          <tbody id="rec-pm"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">ยังไม่มีข้อมูล PM</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ════ PM FORM ════ -->
+    <div class="page" id="page-pm-form">
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-title"><span class="dot"></span>ข้อมูลการทำ PM</div>
+        <div class="g2">
+          <div class="fg"><label>วันที่ทำ PM *</label><input type="date" id="f-date"></div>
+          <div class="fg"><label>เวลา</label><input type="time" id="f-time"></div>
+          <div class="fg"><label>ผู้ทำ PM *</label><input type="text" id="f-tech" placeholder="ชื่อช่าง/ผู้รับผิดชอบ"></div>
+          <div class="fg"><label>AGV ID *</label><select id="f-agv"><option value="">-- เลือก AGV --</option></select></div>
+          <div class="fg"><label>ประเภท PM</label>
+            <select id="f-type"><option>PM รายสัปดาห์</option><option>PM รายเดือน</option><option>PM พิเศษ</option><option>PM หลังซ่อม</option></select>
+          </div>
+          <div class="fg"><label>ชั่วโมงใช้งาน (Runtime hrs)</label><input type="number" id="f-hrs" placeholder="เช่น 1250"></div>
+        </div>
+        <div class="fg"><label>หมายเหตุ</label><textarea id="f-note" placeholder="บันทึกเพิ่มเติม..."></textarea></div>
+        <div class="fg">
+          <label>รูปถ่ายหลักฐาน</label>
+          <input type="file" id="f-imgs" accept="image/*" multiple="" onchange="previewImgs(this)">
+          <div class="img-grid" id="img-preview"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-title"><span class="dot"></span>รายการตรวจสอบ PM (11 ข้อ)</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="checkAll(&#39;ok&#39;)">✓ ผ่านทั้งหมด</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="checkAll(null)">↺ ล้างทั้งหมด</button>
+          <span id="check-progress" style="margin-left:auto;font-size:12px;color:var(--text2);align-self:center">0/11 ตรวจแล้ว</span>
+        </div>
+        <div id="cl-items"><div class="ci " id="ci1">
+      <div class="ci-num">01</div>
+      <div class="ci-body">
+        <div class="ci-text">ทำความสะอาดเลนส์สแกนเนอร์นิรภัย (ใช้สำลีชุบแอลกอฮอล์เช็ดพื้นผิว ต้องไม่มีคราบสกปรกชัดเจน)</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(1,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(1,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(1,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci2">
+      <div class="ci-num">02</div>
+      <div class="ci-body">
+        <div class="ci-text">แผงควบคุม (ตรวจสอบด้วยสายตาว่าป้ายสัญลักษณ์สูญหายหรือไม่ หากหายต้องติดตั้งใหม่ทันที)</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(2,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(2,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(2,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci3">
+      <div class="ci-num">03</div>
+      <div class="ci-body">
+        <div class="ci-text">ตรวจสอบแชสซี (ตรวจสอบว่าด้านใต้แชสซี AGV มีสิ่งแปลกปลอมหรือไม่)</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(3,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(3,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(3,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci4">
+      <div class="ci-num">04</div>
+      <div class="ci-body">
+        <div class="ci-text">ตรวจสอบปุ่มหยุดฉุกเฉิน (ต้องใช้งานได้ปกติ หากใช้งานไม่ได้ต้องเปลี่ยนทันที)</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(4,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(4,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(4,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci5">
+      <div class="ci-num">05</div>
+      <div class="ci-body">
+        <div class="ci-text">ตรวจสอบไฟสามสี (ต้องใช้งานได้ปกติ หากใช้งานไม่ได้ต้องเปลี่ยนทันที)</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(5,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(5,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(5,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci6">
+      <div class="ci-num">06</div>
+      <div class="ci-body">
+        <div class="ci-text">ตรวจสอบตำแหน่งเซ็นเซอร์ (หากตำแหน่งไม่ถูกต้องต้องปรับทันที)</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(6,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(6,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(6,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci7">
+      <div class="ci-num">07</div>
+      <div class="ci-body">
+        <div class="ci-text">ตรวจสอบสายไฟของอุปกรณ์ไฟฟ้า (ต้องไม่หลวม)</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(7,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(7,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(7,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci8">
+      <div class="ci-num">08</div>
+      <div class="ci-body">
+        <div class="ci-text">ตรวจสอบสกรูทุกจุด (หากหลวมต้องขันให้แน่นทันที)</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(8,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(8,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(8,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci9">
+      <div class="ci-num">09</div>
+      <div class="ci-body">
+        <div class="ci-text">ล้อบังคับทิศทาง: ทำความสะอาดเส้นผม เศษด้าย และสิ่งสกปรกที่พันอยู่บนล้อ</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(9,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(9,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(9,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci10">
+      <div class="ci-num">10</div>
+      <div class="ci-body">
+        <div class="ci-text">ตรวจสอบแบตเตอรี่: ติดตั้งแน่นหนา, ระบบสลับจ่ายไฟกับซุปเปอร์คาปาซิเตอร์ทำงานปกติ, จุดต่อสายไฟแน่น</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(10,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(10,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(10,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div><div class="ci " id="ci11">
+      <div class="ci-num">11</div>
+      <div class="ci-body">
+        <div class="ci-text">เครื่องอ่าน/เขียนแถบแม่เหล็ก: ไฟแสดงสถานะปกติ, สายเชื่อมต่อแน่น, รถวิ่งตามเส้นทางปกติ</div>
+        <div class="ci-actions">
+          <button class="s-btn ok " onclick="setC(11,&#39;ok&#39;)">✓ ผ่าน</button>
+          <button class="s-btn fail " onclick="setC(11,&#39;fail&#39;)">✗ ไม่ผ่าน</button>
+          <button class="s-btn na " onclick="setC(11,&#39;na&#39;)">— ไม่ได้ตรวจ</button>
+        </div>
+        
+      </div>
+    </div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>ลายเซ็น</div>
+        <div class="g2">
+          <div>
+            <label>ลายเซ็นช่าง PM</label>
+            <div class="sig-box" id="sig1-box">
+              <canvas id="sig1" width="400" height="100"></canvas>
+              <span id="sig1-ph">✍️ คลิกเพื่อเซ็น</span>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="clearSig(1)">ล้างลายเซ็น</button>
+          </div>
+          <div>
+            <label>ลายเซ็นผู้อนุมัติ</label>
+            <div class="sig-box" id="sig2-box">
+              <canvas id="sig2" width="400" height="100"></canvas>
+              <span id="sig2-ph">✍️ คลิกเพื่อเซ็น</span>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="clearSig(2)">ล้างลายเซ็น</button>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary" onclick="savePM()">💾 บันทึก PM</button>
+          <button type="button" class="btn btn-secondary" onclick="clearForm()">🗑️ ล้างข้อมูล</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ HISTORY ════ -->
+    <div class="page" id="page-history">
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-title"><span class="dot"></span>ตัวกรอง</div>
+        <div class="g3">
+          <div class="fg" style="margin-bottom:0"><label>AGV ID</label><select id="flt-agv" onchange="renderHistory()"><option value="">ทั้งหมด</option></select></div>
+          <div class="fg" style="margin-bottom:0"><label>เดือน</label><input type="month" id="flt-mo" onchange="renderHistory()"></div>
+          <div class="fg" style="margin-bottom:0"><label>ค้นหา</label><input type="text" id="flt-q" placeholder="ชื่อช่าง, หมายเหตุ..." oninput="renderHistory()"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="card-title" style="margin-bottom:0"><span class="dot"></span>ประวัติ PM</div>
+          <span id="hist-cnt" class="badge bb">0 รายการ</span>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>วันที่</th><th>AGV</th><th>ช่าง</th><th>ประเภท</th><th>ผ่าน</th><th>ปัญหา</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+          <tbody id="hist-body"><tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">ไม่พบข้อมูล</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ════ PROBLEMS ════ -->
+    <div class="page active" id="page-problems">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary btn-sm" onclick="filterProbs(&#39;all&#39;)" id="pf-all">ทั้งหมด</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="filterProbs(&#39;open&#39;)" id="pf-open">เปิดอยู่</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="filterProbs(&#39;in-progress&#39;)" id="pf-ip">กำลังแก้ไข</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="filterProbs(&#39;resolved&#39;)" id="pf-res">แก้ไขแล้ว</button>
+        </div>
+        <button type="button" class="btn btn-warning btn-sm" onclick="openProbModal()">+ เพิ่มปัญหา</button>
+      </div>
+      <div id="prob-list"><div style="text-align:center;padding:40px;color:var(--text3)">🎉 ไม่มีปัญหาในหมวดนี้</div></div>
+    </div>
+
+    <!-- ════ AGV MANAGE ════ -->
+    <div class="page" id="page-agv-manage">
+      <div style="display:flex;justify-content:space-between;margin-bottom:18px">
+        <div></div>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openAddAGV()">+ เพิ่ม AGV</button>
+      </div>
+      <div id="agv-manage-grid" class="g3"></div>
+    </div>
+
+    <!-- ════ STATS ════ -->
+    <div class="page" id="page-stats">
+      <div class="stats-grid">
+        <div class="stat-card green"><div class="stat-label">MTBF เฉลี่ย</div><div class="stat-val" id="st-mtbf">—</div><div class="stat-sub">ชั่วโมง</div></div>
+        <div class="stat-card blue"><div class="stat-label">MTTR เฉลี่ย</div><div class="stat-val" id="st-mttr">—</div><div class="stat-sub">ชั่วโมง</div></div>
+        <div class="stat-card orange"><div class="stat-label">Availability</div><div class="stat-val" id="st-avail">—</div><div class="stat-sub">%</div></div>
+        <div class="stat-card red"><div class="stat-label">ปัญหาทั้งหมด</div><div class="stat-val" id="st-total-p">0</div><div class="stat-sub">รายการ</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>MTBF / MTTR แยกรายเครื่อง</div>
+          <div id="mtbf-table"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>ประเภทปัญหาที่พบบ่อย</div>
+          <div id="prob-type-chart"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>รายการตรวจที่มักไม่ผ่าน</div>
+        <div id="fail-items-chart"></div>
+      </div>
+    </div>
+
+    
+    <!-- ════ EXPORT ════ -->
+    <div class="page" id="page-export">
+      <div class="g2">
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>🖨️ Export PDF</div>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:14px">เปิดหน้าต่างพิมพ์ (Print Dialog) พร้อมรายงาน PM ฉบับสมบูรณ์</p>
+          <div class="fg"><label>เดือน</label><input type="month" id="ex-mo"></div>
+          <div class="fg"><label>AGV</label><select id="ex-agv"><option value="">ทั้งหมด</option></select></div>
+          <button type="button" class="btn btn-primary" onclick="exportPDF()">🖨️ Export PDF</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>📄 Export HTML</div>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:14px">ดาวน์โหลดรายงาน HTML ดูได้ในเบราว์เซอร์ออฟไลน์</p>
+          <div class="fg"><label>เดือน</label><input type="month" id="ex-html-mo"></div>
+          <div class="fg"><label>AGV</label><select id="ex-html-agv"><option value="">ทั้งหมด</option></select></div>
+          <button type="button" class="btn btn-secondary" onclick="exportHTML()">📄 Export HTML</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>📊 Export Excel (CSV)</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Export ข้อมูลรูปแบบ CSV เปิดใน Excel ได้ทันที</p>
+        <div class="g2">
+          <div class="fg"><label>เดือน</label><input type="month" id="ex-csv-mo"></div>
+          <div class="fg"><label>AGV</label><select id="ex-csv-agv"><option value="">ทั้งหมด</option></select></div>
+        </div>
+        <button type="button" class="btn btn-warning" onclick="exportCSV()">📊 Export CSV / Excel</button>
+      </div>
+    </div>
+
+    <!-- ════ BACKUP ════ -->
+    <div class="page" id="page-backup">
+      <div class="g2">
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>💾 Backup ข้อมูล</div>
+          <div id="bk-info" style="font-size:12px;color:var(--text3);margin-bottom:14px">📦 กำลังโหลด...</div>
+          <button type="button" class="btn btn-primary" onclick="backupData()">💾 Download Backup (.json)</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="dot"></span>📂 Restore ข้อมูล</div>
+          <div class="fg"><label>เลือกไฟล์ Backup (.json)</label><input type="file" id="r-file" accept=".json"></div>
+          <div style="display:flex;gap:8px">
+            <button type="button" class="btn btn-warning" onclick="restoreData()">📂 Restore</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="clearAll()">🗑️ ล้างทั้งหมด</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>ประวัติ Backup</div>
+        <div id="bk-history"><div style="color:var(--text3);font-size:13px;padding:16px 0">ยังไม่มีประวัติ</div></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Mobile Nav -->
+<div class="mob-nav">
+  <div class="mob-nav-inner">
+    <div class="mob-nav-item" id="mn-dashboard" onclick="showPage(&#39;dashboard&#39;)"><span class="icon">📊</span>Dashboard</div>
+    <div class="mob-nav-item" id="mn-pm-form" onclick="showPage(&#39;pm-form&#39;)"><span class="icon">🔧</span>PM ใหม่</div>
+    <div class="mob-nav-item" id="mn-history" onclick="showPage(&#39;history&#39;)"><span class="icon">📋</span>ประวัติ</div>
+    <div class="mob-nav-item active" id="mn-problems" onclick="showPage(&#39;problems&#39;)">
+      <span class="icon">⚠️</span>ปัญหา
+      <span class="mob-badge" id="mn-prob-badge" style="display: none;">0</span>
+    </div>
+    <div class="mob-nav-item" id="mn-backup" onclick="showPage(&#39;backup&#39;)"><span class="icon">💾</span>ข้อมูล</div>
+  </div>
+</div>
+
+<!-- Modal: Edit PM -->
+<div class="mo" id="mo-edit">
+  <div class="md">
+    <div class="md-hd"><div class="md-title">✏️ แก้ไข PM</div><button type="button" class="md-x" onclick="closeMo(&#39;mo-edit&#39;)">✕</button></div>
+    <div id="mo-edit-body"></div>
+  </div>
+</div>
+
+<!-- Modal: Problem -->
+<div class="mo" id="mo-prob">
+  <div class="md">
+    <div class="md-hd"><div class="md-title" id="mo-prob-title">⚠️ บันทึกปัญหา</div><button type="button" class="md-x" onclick="closeMo(&#39;mo-prob&#39;)">✕</button></div>
+    <input type="hidden" id="prob-edit-id">
+    <div class="g2">
+      <div class="fg"><label>AGV ID</label><select id="pr-agv"><option value="">-- เลือก AGV --</option></select></div>
+      <div class="fg"><label>วันที่พบ</label><input type="date" id="pr-date"></div>
+    </div>
+    <div class="fg"><label>หัวข้อปัญหา *</label><input type="text" id="pr-title" placeholder="เช่น เซ็นเซอร์ล้มเหลว"></div>
+    <div class="g2">
+      <div class="fg"><label>ความรุนแรง</label>
+        <select id="pr-sev">
+          <option value="low">🟢 ต่ำ</option><option value="medium" selected="">🟡 กลาง</option><option value="high">🔴 สูง</option>
+        </select>
+      </div>
+      <div class="fg"><label>สถานะ</label>
+        <select id="pr-status"><option value="open">เปิดอยู่</option><option value="in-progress">กำลังแก้ไข</option><option value="resolved">แก้ไขแล้ว</option></select>
+      </div>
+    </div>
+    <div class="fg"><label>รายละเอียด / วิธีแก้ไข</label><textarea id="pr-desc" placeholder="อาการ, สาเหตุ, วิธีแก้ไข..."></textarea></div>
+    <div class="fg"><label>เวลาซ่อม (ชั่วโมง) สำหรับคำนวณ MTTR (เวลาเฉลี่ยในการซ่อมบำรุง)</label><input type="number" id="pr-repair" placeholder="เช่น 2.5" step="0.5"></div>
+    <div style="display:flex;gap:8px">
+      <button type="button" class="btn btn-primary" onclick="saveProb()">บันทึก</button>
+      <button type="button" class="btn btn-secondary" onclick="closeMo(&#39;mo-prob&#39;)">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add AGV -->
+<div class="mo" id="mo-agv">
+  <div class="md" style="max-width:440px">
+    <div class="md-hd"><div class="md-title" id="mo-agv-title">🤖 เพิ่ม AGV</div><button type="button" class="md-x" onclick="closeMo(&#39;mo-agv&#39;)">✕</button></div>
+    <input type="hidden" id="agv-edit-id">
+    <div class="fg"><label>AGV ID *</label><input type="text" id="agv-id-inp" placeholder="เช่น AGV-010"></div>
+    <div class="fg"><label>ชื่อ/รุ่น</label><input type="text" id="agv-name" placeholder="เช่น Toyota AGV Tow 1000kg"></div>
+    <div class="fg"><label>ตำแหน่งใช้งาน</label><input type="text" id="agv-loc" placeholder="เช่น Line A, Warehouse B"></div>
+    <div class="fg"><label>วันที่ติดตั้ง</label><input type="date" id="agv-install"></div>
+    <div class="fg"><label>รอบ PM (วัน)</label><input type="number" id="agv-cycle" value="7" min="1"></div>
+    <div style="display:flex;gap:8px">
+      <button type="button" class="btn btn-primary" onclick="saveAGV()">บันทึก</button>
+      <button type="button" class="btn btn-secondary" onclick="closeMo(&#39;mo-agv&#39;)">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: View Photo -->
+<div class="mo" id="mo-photo">
+  <div class="md" style="max-width:600px;text-align:center">
+    <div class="md-hd"><div class="md-title">รูปถ่าย</div><button type="button" class="md-x" onclick="closeMo(&#39;mo-photo&#39;)">✕</button></div>
+    <img id="mo-photo-img" style="max-width:100%;border-radius:8px">
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="tc" id="tc"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const CL = [
+  {id:1,text:'ทำความสะอาดเลนส์สแกนเนอร์นิรภัย (ใช้สำลีชุบแอลกอฮอล์เช็ดพื้นผิว ต้องไม่มีคราบสกปรกชัดเจน)'},
+  {id:2,text:'แผงควบคุม (ตรวจสอบด้วยสายตาว่าป้ายสัญลักษณ์สูญหายหรือไม่ หากหายต้องติดตั้งใหม่ทันที)'},
+  {id:3,text:'ตรวจสอบแชสซี (ตรวจสอบว่าด้านใต้แชสซี AGV มีสิ่งแปลกปลอมหรือไม่)'},
+  {id:4,text:'ตรวจสอบปุ่มหยุดฉุกเฉิน (ต้องใช้งานได้ปกติ หากใช้งานไม่ได้ต้องเปลี่ยนทันที)'},
+  {id:5,text:'ตรวจสอบไฟสามสี (ต้องใช้งานได้ปกติ หากใช้งานไม่ได้ต้องเปลี่ยนทันที)'},
+  {id:6,text:'ตรวจสอบตำแหน่งเซ็นเซอร์ (หากตำแหน่งไม่ถูกต้องต้องปรับทันที)'},
+  {id:7,text:'ตรวจสอบสายไฟของอุปกรณ์ไฟฟ้า (ต้องไม่หลวม)'},
+  {id:8,text:'ตรวจสอบสกรูทุกจุด (หากหลวมต้องขันให้แน่นทันที)'},
+  {id:9,text:'ล้อบังคับทิศทาง: ทำความสะอาดเส้นผม เศษด้าย และสิ่งสกปรกที่พันอยู่บนล้อ'},
+  {id:10,text:'ตรวจสอบแบตเตอรี่: ติดตั้งแน่นหนา, ระบบสลับจ่ายไฟกับซุปเปอร์คาปาซิเตอร์ทำงานปกติ, จุดต่อสายไฟแน่น'},
+  {id:11,text:'เครื่องอ่าน/เขียนแถบแม่เหล็ก: ไฟแสดงสถานะปกติ, สายเชื่อมต่อแน่น, รถวิ่งตามเส้นทางปกติ'},
+];
+
+const DEFAULT_AGV = ['AGV-001','AGV-002','AGV-003','AGV-004','AGV-005','AGV-006','AGV-007','AGV-008','AGV-009'];
+
+let checkS = {}, checkN = {}, formImgs = [], sigCtx = {}, sigDraw = {}, editingPMId = null, probFilter = 'all';
+
+// ── XSS helper: escape HTML special chars before inserting into innerHTML ──
+function escHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// ── Unique ID using crypto.randomUUID when available ──
+function genId() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+// ══════════════════════════════════════════════
+// GOOGLE SHEETS API LAYER
+// ══════════════════════════════════════════════
+const API_URL = 'https://script.google.com/macros/s/AKfycbySsGjBSHBFYZruopX9ksSr4C219mgiJPcp-9altjCegcVzfVslYyZ4stI0MNd9g5yaaA/exec';
+
+// In-memory cache — loaded once on init, then kept in sync
+let _cache = { records:[], problems:[], agvList:[], backups:[] };
+let _cacheReady = false;
+
+// ── Low-level fetch helpers ──
+async function apiGet(sheet) {
+  const res = await fetch(`${API_URL}?action=read&sheet=${encodeURIComponent(sheet)}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function apiPost(body) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+// ── Write entire sheet (full overwrite) ──
+async function apiWrite(sheet, data) {
+  return apiPost({ action:'write', sheet, data });
+}
+
+// ── Append a single row ──
+async function apiAppend(sheet, row) {
+  return apiPost({ action:'append', sheet, data: row });
+}
+
+// ── Delete a row by id ──
+async function apiDelete(sheet, id) {
+  return apiPost({ action:'delete', sheet, id });
+}
+
+// ── Load all data from Sheets into cache ──
+async function loadAllFromSheets() {
+  showLoading(true);
+  try {
+    const [records, problems, agvList, backups] = await Promise.all([
+      apiGet('records'),
+      apiGet('problems'),
+      apiGet('agvList'),
+      apiGet('backups').catch(() => [])  // backups sheet may not exist yet
+    ]);
+    // Sort records newest-first (Sheets returns oldest-first)
+    _cache.records  = Array.isArray(records)  ? records.sort((a,b)=>b.date.localeCompare(a.date))  : [];
+    _cache.problems = Array.isArray(problems) ? problems : [];
+    _cache.agvList  = Array.isArray(agvList)  && agvList.length
+                        ? agvList
+                        : DEFAULT_AGV.map(id => ({id, name:'', loc:'', install:'', cycle:7, active:true}));
+    _cache.backups  = Array.isArray(backups)  ? backups  : [];
+    _cacheReady = true;
+  } catch(e) {
+    showToast('โหลดข้อมูลจาก Google Sheets ไม่สำเร็จ: ' + e.message, 'error');
+    // Fall back to empty defaults so UI still works
+    _cache = { records:[], problems:[],
+      agvList: DEFAULT_AGV.map(id => ({id, name:'', loc:'', install:'', cycle:7, active:true})),
+      backups:[] };
+    _cacheReady = true;
+  } finally {
+    showLoading(false);
+  }
+}
+
+// ── Loading overlay ──
+function showLoading(on) {
+  let el = document.getElementById('loading-overlay');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'loading-overlay';
+    el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:#fff;font-size:15px;';
+    el.innerHTML = '<div style="width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top-color:#00d4aa;border-radius:50%;animation:spin .8s linear infinite"></div><span id="loading-msg">กำลังโหลดข้อมูล...</span>';
+    if (!document.getElementById('spin-style')) {
+      const s = document.createElement('style');
+      s.id = 'spin-style';
+      s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+      document.head.appendChild(s);
+    }
+    document.body.appendChild(el);
+  }
+  el.style.display = on ? 'flex' : 'none';
+}
+function setLoadingMsg(msg) {
+  const el = document.getElementById('loading-msg');
+  if (el) el.textContent = msg;
+}
+
+// ── GD() — synchronous accessor used throughout the code ──
+// Returns the in-memory cache.  All mutating operations must also call
+// the matching apiWrite/apiAppend/apiDelete to persist to Sheets.
+function GD() { return _cache; }
+// SD() is kept as a no-op so old call-sites don't break;
+// each save function now calls the API directly.
+function SD() {}
+function D()  { return _cache; }
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+const PAGE_TITLES = {dashboard:'Dashboard','pm-form':'บันทึก PM ใหม่',history:'ประวัติ PM',problems:'ปัญหาที่พบ','agv-manage':'จัดการ AGV',stats:'สถิติ MTBF/MTTR',export:'Export ข้อมูล',backup:'Backup / Restore'};
+
+function showPage(id, agvPrefill) {
+  console.log('showPage()',id);
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pageEl = document.getElementById('page-'+id);
+  if(pageEl) pageEl.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.mob-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('pt').textContent = PAGE_TITLES[id]||id;
+  const el = document.querySelector(`.nav-item[onclick*="'${id}'"]`);
+  if (el) el.classList.add('active');
+  const mel = document.getElementById('mn-'+id);
+  if (mel) { mel.classList.add('active'); }
+  // close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
+  if (id==='dashboard') renderDashboard();
+  if (id==='history') renderHistory();
+  if (id==='problems') renderProblems();
+  if (id==='agv-manage') renderAGVManage();
+  if (id==='stats') renderStats();
+  if (id==='backup') renderBackupInfo();
+  if (id==='pm-form') { populateAGVSelects(); if(agvPrefill) document.getElementById('f-agv').value=agvPrefill; }
+  if (id==='export') populateExportSelects();
+  updateBadges();
+}
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+// ══════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light',!isDark);
+  document.getElementById('ti').textContent = isDark?'☀️':'🌙';
+  document.getElementById('tt').textContent = isDark?'โหมด Light':'โหมด Dark';
+  localStorage.setItem('agv_theme', isDark?'dark':'light');
+}
+
+// ══════════════════════════════════════════════
+// AGV SELECTS POPULATE
+// ══════════════════════════════════════════════
+function populateAGVSelects() {
+  const d = GD(); const ids = d.agvList.filter(a=>a.active).map(a=>a.id);
+  ['f-agv','flt-agv','ex-agv','ex-html-agv','ex-csv-agv','pr-agv'].forEach(sid => {
+    const el = document.getElementById(sid); if(!el) return;
+    const cur = el.value;
+    const isFilter = ['flt-agv','ex-agv','ex-html-agv','ex-csv-agv'].includes(sid);
+    el.innerHTML = (isFilter?'<option value="">ทั้งหมด</option>':'<option value="">-- เลือก AGV --</option>') +
+      ids.map(id=>`<option ${id===cur?'selected':''}>${id}</option>`).join('');
+  });
+}
+
+function populateExportSelects() { populateAGVSelects(); }
+
+// ══════════════════════════════════════════════
+// CHECKLIST
+// ══════════════════════════════════════════════
+function renderCL(containerId='cl-items') {
+  const el = document.getElementById(containerId); if(!el) return;
+  const total = CL.length;
+  const done = CL.filter(c=>checkS[c.id]).length;
+  const pc = document.getElementById('check-progress');
+  if(pc) pc.textContent = `${done}/${total} ตรวจแล้ว`;
+  el.innerHTML = CL.map(c => {
+    const s = checkS[c.id]||null;
+    return `<div class="ci ${s==='ok'?'ok':s==='fail'?'fail':''}" id="ci${c.id}">
+      <div class="ci-num">${String(c.id).padStart(2,'0')}</div>
+      <div class="ci-body">
+        <div class="ci-text">${c.text}</div>
+        <div class="ci-actions">
+          <button class="s-btn ok ${s==='ok'?'a':''}" onclick="setC(${c.id},'ok')">✓ ผ่าน</button>
+          <button class="s-btn fail ${s==='fail'?'a':''}" onclick="setC(${c.id},'fail')">✗ ไม่ผ่าน</button>
+          <button class="s-btn na ${s==='na'?'a':''}" onclick="setC(${c.id},'na')">— ไม่ได้ตรวจ</button>
+        </div>
+        ${s==='fail'?`<input type="text" style="margin-top:8px;font-size:12px;padding:5px 9px" placeholder="รายละเอียดปัญหา..." value="${checkN[c.id]||''}" oninput="checkN[${c.id}]=this.value">`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setC(id,val) { checkS[id]=checkS[id]===val?null:val; renderCL(); }
+function setC2(id,val,cont) { checkS[id]=checkS[id]===val?null:val; renderCL(cont); }
+
+function checkAll(val) {
+  CL.forEach(c=>checkS[c.id]=val);
+  checkN={};
+  renderCL();
+}
+
+// ══════════════════════════════════════════════
+// IMAGES
+// ══════════════════════════════════════════════
+function previewImgs(input) {
+  const files = Array.from(input.files);
+  formImgs = [];
+  const prev = document.getElementById('img-preview'); prev.innerHTML='';
+  files.forEach(f => {
+    const r = new FileReader();
+    r.onload = e => {
+      formImgs.push(e.target.result);
+      const wrap = document.createElement('div'); wrap.className='img-del';
+      const img = document.createElement('img'); img.className='img-thumb'; img.src=e.target.result;
+      img.onclick=()=>viewPhoto(e.target.result);
+      const del = document.createElement('button'); del.className='img-del-btn'; del.textContent='✕';
+      del.onclick=()=>{ formImgs=formImgs.filter(x=>x!==e.target.result); wrap.remove(); };
+      wrap.appendChild(img); wrap.appendChild(del); prev.appendChild(wrap);
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function viewPhoto(src) {
+  // if src was encoded for safe inline attributes, decode it
+  const s = arguments[1] ? decodeURIComponent(src) : src;
+  document.getElementById('mo-photo-img').src=s;
+  document.getElementById('mo-photo').classList.add('open');
+}
+
+// ═════════════════════════════════════════════=
+// SIGNATURE
+// ═════════════════════════════════════════════=
+function initSig(n) {
+  const canvas = document.getElementById('sig'+n);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  sigCtx[n]=ctx; sigDraw[n]=false;
+  const ph = document.getElementById('sig'+n+'-ph');
+  function getPos(e,c){
+    const r=c.getBoundingClientRect();
+    const cl = e.touches?e.touches[0]:e;
+    return {x:(cl.clientX-r.left)*(c.width/r.width), y:(cl.clientY-r.top)*(c.height/r.height)};
+  }
+  function start(e){ e.preventDefault(); sigDraw[n]=true; const p=getPos(e,canvas); ctx.beginPath(); ctx.moveTo(p.x,p.y); if(ph) ph.style.display='none'; }
+  function move(e){ e.preventDefault(); if(!sigDraw[n]) return; const p=getPos(e,canvas); ctx.lineTo(p.x,p.y); ctx.strokeStyle=isDark?'#e6edf3':'#1c2128'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke(); }
+  function end(){ sigDraw[n]=false; }
+  canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); canvas.addEventListener('mouseup',end);
+  canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
+}
+
+function clearSig(n) {
+  const c=document.getElementById('sig'+n); if(!c) return;
+  const ctx=sigCtx[n]; if(!ctx) return;
+  ctx.clearRect(0,0,c.width,c.height);
+  const ph=document.getElementById('sig'+n+'-ph'); if(ph) ph.style.display='';
+}
+
+function getSigData(n) {
+  const c=document.getElementById('sig'+n); if(!c) return null;
+  const ctx=sigCtx[n]; if(!ctx) return null;
+  try{
+    const d=ctx.getImageData(0,0,c.width,c.height).data;
+    const hasContent=Array.from(d).some((v,i)=>i%4===3&&v>0);
+    return hasContent? c.toDataURL(): null;
+  }catch(e){ return null; }
+}
+
+async function savePM(isEdit=false, eid=null) {
+  const date=document.getElementById('f-date').value;
+  const time=document.getElementById('f-time').value;
+  const tech=document.getElementById('f-tech').value.trim();
+  const agv=document.getElementById('f-agv').value;
+  if(!date||!tech||!agv) { showToast('กรุณากรอกข้อมูลให้ครบ','error'); return; }
+  const checks=CL.map(c=>({id:c.id,text:c.text,status:checkS[c.id]||null,note:checkN[c.id]||''}));
+  const passed=checks.filter(c=>c.status==='ok').length;
+  const failed=checks.filter(c=>c.status==='fail').length;
+  const rec = {
+    id: eid||genId(), date, time, technician:tech,
+    agvId:agv, type:document.getElementById('f-type').value,
+    hrs:document.getElementById('f-hrs').value, note:document.getElementById('f-note').value.trim(),
+    checks, passed, failed,
+    status: failed>0?'มีปัญหา':(passed===CL.length?'ผ่าน':'ไม่สมบูรณ์'),
+    sig1:getSigData(1), sig2:getSigData(2), images:[...formImgs], createdAt:new Date().toISOString()
+  };
+
+  showLoading(true);
+  setLoadingMsg(isEdit ? 'กำลังบันทึกการแก้ไข...' : 'กำลังบันทึก PM...');
+  try {
+    if (isEdit && eid) {
+      // Update cache
+      const i = _cache.records.findIndex(r=>r.id===eid);
+      if (i>=0) _cache.records[i] = rec;
+      // Full overwrite of records sheet
+      await apiWrite('records', _cache.records);
+    } else {
+      // Add to cache (newest first)
+      _cache.records.unshift(rec);
+      await apiAppend('records', rec);
+    }
+
+    // Auto-create problems from failed items
+    if (!isEdit && failed > 0) {
+      const newProbs = checks.filter(c=>c.status==='fail').map(c=>({
+        id:genId(), agvId:agv, date,
+        title:`[PM] ไม่ผ่าน: รายการที่ ${c.id}`,
+        severity:'medium', desc:c.note||c.text, status:'open', repairHrs:null
+      }));
+      for (const p of newProbs) {
+        _cache.problems.unshift(p);
+        await apiAppend('problems', p);
+      }
+    }
+
+    showToast(`บันทึก PM สำเร็จ${failed>0?' (พบ '+failed+' ปัญหา สร้าง issue อัตโนมัติ)':''}`, failed>0?'warn':'success');
+    if (isEdit) { closeMo('mo-edit'); renderHistory(); }
+    else { clearForm(); showPage('history'); }
+  } catch(e) {
+    showToast('บันทึกไม่สำเร็จ: ' + e.message, 'error');
+  } finally {
+    showLoading(false);
+  }
+}
+
+function clearForm() {
+  ['f-date','f-time','f-tech','f-hrs','f-note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('f-time').value=new Date().toTimeString().slice(0,5);
+  document.getElementById('f-agv').value='';
+  checkS={}; checkN={}; formImgs=[];
+  document.getElementById('img-preview').innerHTML='';
+  clearSig(1); clearSig(2);
+  renderCL();
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
+function renderDashboard() {
+  const d=GD(); const now=new Date();
+  const tm=now.toISOString().slice(0,7);
+  const mrecs=d.records.filter(r=>r.date.startsWith(tm));
+  const openProbs=d.problems.filter(p=>p.status!=='resolved');
+  const agvIds=d.agvList.filter(a=>a.active).map(a=>a.id);
+
+  // Overdue AGV
+  const overdue=agvIds.filter(id=>{
+    const agv=d.agvList.find(a=>a.id===id); if(!agv) return false;
+    const recs=d.records.filter(r=>r.agvId===id);
+    if(!recs.length) return true;
+    const last=new Date(recs[0].date); const cycle=agv.cycle||7;
+    return (now-last)/(86400000)>cycle;
+  });
+
+  document.getElementById('s-month').textContent=mrecs.length;
+  document.getElementById('s-agv').textContent=agvIds.length;
+  document.getElementById('s-prob').textContent=openProbs.length;
+  document.getElementById('s-od').textContent=overdue.length;
+  const odCard=document.getElementById('stat-od-card');
+  if(overdue.length>0){odCard.classList.add('alert')}else{odCard.classList.remove('alert')}
+
+  // Topbar overdue
+  const odTop=document.getElementById('overdue-topbar');
+  if(overdue.length>0){odTop.style.display='';odTop.textContent=`⚠️ ${overdue.length} เครื่อง PM เกินกำหนด`;}
+  else odTop.style.display='none';
+
+  // Alert banners
+  const alerts=[];
+  if(overdue.length>0) alerts.push(`<div class="alert-banner danger">🔴 AGV ต้องทำ PM: ${overdue.join(', ')}</div>`);
+  if(openProbs.filter(p=>p.severity==='high').length>0)
+    alerts.push(`<div class="alert-banner danger">🚨 มีปัญหาความรุนแรงสูง ${openProbs.filter(p=>p.severity==='high').length} รายการ รอการแก้ไข</div>`);
+  document.getElementById('alert-area').innerHTML=alerts.join('');
+
+  // Weekly chart
+  const wdays=[]; for(let i=6;i>=0;i--){const dd=new Date(now);dd.setDate(dd.getDate()-i);wdays.push(dd.toISOString().split('T')[0]);}
+  const dn=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  const maxC=Math.max(1,...wdays.map(day=>d.records.filter(r=>r.date===day).length));
+  const todayStr=new Date().toISOString().split('T')[0];
+  document.getElementById('wchart').innerHTML=wdays.map(day=>{
+    const cnt=d.records.filter(r=>r.date===day).length;
+    const h=Math.max(3,Math.round((cnt/maxC)*100));
+    const isToday=day===todayStr;
+    return `<div class="bw" style="opacity:${isToday?1:.8}"><div class="bv" style="font-weight:700">${cnt}</div><div class="bc"><div class="bar" style="height:${h}%;background:${isToday?'var(--accent2)':'var(--accent)'};${isToday?'box-shadow:0 0 12px rgba(0,153,255,.4);':''}" ></div></div><div class="bl" style="${isToday?'font-weight:700;color:var(--accent2);':''}">${dn[new Date(day).getDay()]}</div></div>`;
+  }).join('');
+
+  // Monthly cal
+  const dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const fd=new Date(now.getFullYear(),now.getMonth(),1).getDay();
+  const today=now.getDate();
+  let cal=''; ['อา','จ','อ','พ','พฤ','ศ','ส'].forEach(dd=>{cal+=`<div style="text-align:center;font-size:10px;color:var(--text3);font-weight:700;padding:2px">${dd}</div>`;});
+  for(let i=0;i<fd;i++) cal+=`<div class="day-box empty"></div>`;
+  for(let day=1;day<=dim;day++){
+    const ds=`${tm}-${String(day).padStart(2,'0')}`;
+    const rr=d.records.filter(r=>r.date===ds);
+    const hf=rr.some(r=>r.failed>0);
+    const cls=hf?'has-issue':rr.length?'has-pm':'no-pm';
+    cal+=`<div class="day-box ${cls} ${day===today?'today':''}" title="${rr.length} PM">${day}</div>`;
+  }
+  document.getElementById('mcal').innerHTML=cal;
+
+  // AGV status
+  document.getElementById('agv-status').innerHTML=agvIds.map(id=>{
+    const recs=d.records.filter(r=>r.agvId===id);
+    const last=recs[0]; const agvinfo=d.agvList.find(a=>a.id===id);
+    const cycle=agvinfo?.cycle||7;
+    const daysSince=last?(now-new Date(last.date))/86400000:9999;
+    const isOD=daysSince>cycle;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px">
+          ${escHtml(id)} ${isOD?'<span style="font-size:10px;color:var(--danger)">⚠️เกินกำหนด</span>':''}
+        </div>
+        <div style="font-size:11px;color:var(--text3)">${last?'ล่าสุด: '+escHtml(last.date)+' ('+Math.floor(daysSince)+' วันที่แล้ว)':'ยังไม่มีข้อมูล'}</div>
+        ${agvinfo?.name?`<div style="font-size:11px;color:var(--text3)">${escHtml(agvinfo.name)}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        ${last?`<span class="badge ${last.status==='ผ่าน'?'bg':last.status==='มีปัญหา'?'br':'by'}">${escHtml(last.status)}</span>`:'<span class="badge bb">ไม่มีข้อมูล</span>'}
+        <button type="button" class="btn btn-secondary btn-xs" onclick="showPage('pm-form','${escHtml(id)}')">+ PM</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Recent problems
+  const rp=openProbs.slice(0,4);
+  document.getElementById('rec-probs').innerHTML=rp.length
+    ?rp.map(p=>`<div style="padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font-weight:700;font-size:13px">${escHtml(p.title)}</span>
+        <span class="badge bb">${escHtml(p.agvId)}</span>
+        <span class="badge ${p.severity==='high'?'br':p.severity==='medium'?'by':'bg'}">${p.severity==='high'?'🔴 สูง':p.severity==='medium'?'🟡 กลาง':'🟢 ต่ำ'}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3)">${escHtml(p.date)}</div>
+    </div>`).join('')
+    :'<div style="text-align:center;padding:24px;color:var(--text3)">🎉 ไม่มีปัญหาที่เปิดอยู่</div>';
+
+  // Recent PM table
+  document.getElementById('rec-pm').innerHTML=d.records.slice(0,5).map(r=>`<tr>
+    <td style="font-family:'Space Mono',monospace;font-size:11px">${escHtml(r.date)}</td>
+    <td><span class="badge bb">${escHtml(r.agvId)}</span></td>
+    <td>${escHtml(r.technician)}</td>
+    <td>${r.passed}/${CL.length}</td>
+    <td>${r.failed>0?`<span style="color:var(--danger);font-weight:700">${r.failed}</span>`:'<span style="color:var(--success)">0</span>'}</td>
+    <td><span class="badge ${r.status==='ผ่าน'?'bg':r.status==='มีปัญหา'?'br':'by'}">${escHtml(r.status)}</span></td>
+  </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">ยังไม่มีข้อมูล PM</td></tr>';
+}
+
+// ══════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════
+function renderHistory() {
+  const d=GD();
+  const fa=document.getElementById('flt-agv')?.value||'';
+  const fm=document.getElementById('flt-mo')?.value||'';
+  const fq=(document.getElementById('flt-q')?.value||'').toLowerCase();
+  let recs=[...d.records];
+  if(fa) recs=recs.filter(r=>r.agvId===fa);
+  if(fm) recs=recs.filter(r=>r.date.startsWith(fm));
+  if(fq) recs=recs.filter(r=>r.technician.toLowerCase().includes(fq)||r.note?.toLowerCase().includes(fq));
+  document.getElementById('hist-cnt').textContent=recs.length+' รายการ';
+  document.getElementById('hist-body').innerHTML=recs.map(r=>`<tr>
+    <td style="font-family:'Space Mono',monospace;font-size:11px">${escHtml(r.date)}${r.time?' '+escHtml(r.time):''}</td>
+    <td><span class="badge bb">${escHtml(r.agvId)}</span></td>
+    <td>${escHtml(r.technician)}</td>
+    <td style="font-size:12px;color:var(--text2)">${escHtml(r.type||'')}</td>
+    <td>${r.passed}/${CL.length}</td>
+    <td>${r.failed>0?`<span style="color:var(--danger);font-weight:700">${r.failed}</span>`:'<span style="color:var(--success)">0</span>'}</td>
+    <td><span class="badge ${r.status==='ผ่าน'?'bg':r.status==='มีปัญหา'?'br':'by'}">${escHtml(r.status)}</span></td>
+    <td style="display:flex;gap:4px">
+      ${r.images?.length?`<button type="button" class="btn btn-secondary btn-xs" onclick="viewPhoto('${encodeURIComponent(r.images[0])}', true)">📷${r.images.length}</button>`:''}
+      <button type="button" class="btn btn-secondary btn-xs" onclick="openEdit('${escHtml(r.id)}')">✏️</button>
+      <button type="button" class="btn btn-danger btn-xs" onclick="delRec('${escHtml(r.id)}')">🗑️</button>
+    </td>
+  </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">ไม่พบข้อมูล</td></tr>';
+  populateAGVSelects();
+}
+
+async function delRec(id) {
+  if(!confirm('ลบรายการ PM นี้?')) return;
+  showLoading(true); setLoadingMsg('กำลังลบ...');
+  try {
+    _cache.records = _cache.records.filter(r=>r.id!==id);
+    await apiDelete('records', id);
+    renderHistory();
+    showToast('ลบแล้ว','info');
+  } catch(e) {
+    showToast('ลบไม่สำเร็จ: '+e.message,'error');
+  } finally { showLoading(false); }
+}
+
+function openEdit(id) {
+  const d=GD(); const r=d.records.find(x=>x.id===id); if(!r) return;
+  editingPMId=id; checkS={}; checkN={};
+  r.checks.forEach(c=>{checkS[c.id]=c.status;checkN[c.id]=c.note;});
+  formImgs=r.images||[];
+  const agvOpts=d.agvList.filter(a=>a.active).map(a=>`<option ${a.id===r.agvId?'selected':''}>${a.id}</option>`).join('');
+  document.getElementById('mo-edit-body').innerHTML=`
+    <div class="g2">
+      <div class="fg"><label>วันที่</label><input type="date" id="f-date" value="${r.date}"></div>
+      <div class="fg"><label>เวลา</label><input type="time" id="f-time" value="${r.time||''}"></div>
+      <div class="fg"><label>ผู้ทำ PM</label><input type="text" id="f-tech" value="${r.technician}"></div>
+      <div class="fg"><label>AGV ID</label><select id="f-agv">${agvOpts}</select></div>
+      <div class="fg"><label>ประเภท</label><select id="f-type"><option ${r.type==='PM รายสัปดาห์'?'selected':''}>PM รายสัปดาห์</option><option ${r.type==='PM รายเดือน'?'selected':''}>PM รายเดือน</option><option ${r.type==='PM พิเศษ'?'selected':''}>PM พิเศษ</option><option ${r.type==='PM หลังซ่อม'?'selected':''}>PM หลังซ่อม</option></select></div>
+      <div class="fg"><label>Runtime hrs</label><input type="number" id="f-hrs" value="${r.hrs||''}"></div>
+    </div>
+    <div class="fg"><label>หมายเหตุ</label><textarea id="f-note">${r.note||''}</textarea></div>
+    ${r.images?.length?`<div class="fg"><label>รูปถ่าย</label><div class="img-grid">${r.images.map(img=>`<img class="img-thumb" src="${img}" onclick="viewPhoto('${encodeURIComponent(img)}', true)">`).join('')}</div></div>`:''}
+    <div class="card-title" style="margin:14px 0 10px"><span class="dot"></span>รายการตรวจสอบ</div>
+    <div id="cl-items"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button type="button" class="btn btn-primary" onclick="savePM(true,'${r.id}')">💾 บันทึก</button>
+      <button type="button" class="btn btn-secondary" onclick="closeMo('mo-edit')">ยกเลิก</button>
+    </div>`;
+  renderCL();
+  document.getElementById('mo-edit').classList.add('open');
+}
+
+// ══════════════════════════════════════════════
+// PROBLEMS
+// ══════════════════════════════════════════════
+function renderProblems() {
+  const d=GD();
+  let probs=[...d.problems];
+  if(probFilter!=='all') probs=probs.filter(p=>p.status===probFilter);
+  const mapIds = { all: 'pf-all', open: 'pf-open', 'in-progress': 'pf-ip', resolved: 'pf-res' };
+  Object.entries(mapIds).forEach(([key,id])=>{
+    const el=document.getElementById(id); if(!el) return;
+    el.className = `btn ${key===probFilter?'btn-primary':'btn-secondary'} btn-sm`;
+  });
+  document.getElementById('prob-list').innerHTML=probs.length
+    ?probs.map(p=>`
+    <div style="background:var(--bg3);border:1px solid ${p.severity==='high'?'var(--danger)':p.severity==='medium'?'var(--warning)':'var(--border)'};border-radius:var(--r2);padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="font-size:20px">${p.status==='resolved'?'✅':p.severity==='high'?'🔴':'🟡'}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-weight:700;font-size:14px">${escHtml(p.title)}</span>
+            <span class="badge bb">${escHtml(p.agvId)}</span>
+            <span class="badge ${p.severity==='high'?'br':p.severity==='medium'?'by':'bg'}">${p.severity==='high'?'สูง':p.severity==='medium'?'กลาง':'ต่ำ'}</span>
+            <span class="badge ${p.status==='resolved'?'bg':p.status==='in-progress'?'bp':'br'}">${p.status==='resolved'?'แก้ไขแล้ว':p.status==='in-progress'?'กำลังแก้':' เปิดอยู่'}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">${escHtml(p.date)}${p.repairHrs?' · ซ่อม '+escHtml(p.repairHrs)+' ชม.':''}</div>
+          ${p.desc?`<div style="font-size:13px;color:var(--text2);margin-top:6px">${escHtml(p.desc)}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <button type="button" class="btn btn-secondary btn-xs" onclick="openEditProb('${escHtml(p.id)}')">✏️</button>
+          <button type="button" class="btn btn-secondary btn-xs" onclick="toggleProb('${escHtml(p.id)}')">${p.status==='resolved'?'↺':'✓'}</button>
+          <button type="button" class="btn btn-danger btn-xs" onclick="delProb('${escHtml(p.id)}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('')
+    :'<div style="text-align:center;padding:40px;color:var(--text3)">🎉 ไม่มีปัญหาในหมวดนี้</div>';
+}
+
+function filterProbs(f) { probFilter=f; renderProblems(); }
+
+function openProbModal() {
+  document.getElementById('mo-prob-title').textContent='⚠️ บันทึกปัญหาใหม่';
+  document.getElementById('prob-edit-id').value='';
+  document.getElementById('pr-date').value=new Date().toISOString().split('T')[0];
+  ['pr-title','pr-desc','pr-repair'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('pr-sev').value='medium';
+  document.getElementById('pr-status').value='open';
+  populateAGVSelects();
+  document.getElementById('mo-prob').classList.add('open');
+}
+
+function openEditProb(id) {
+  const d=GD(); const p=d.problems.find(x=>x.id===id); if(!p) return;
+  document.getElementById('mo-prob-title').textContent='✏️ แก้ไขปัญหา';
+  document.getElementById('prob-edit-id').value=id;
+  populateAGVSelects();
+  document.getElementById('pr-agv').value=p.agvId;
+  document.getElementById('pr-date').value=p.date;
+  document.getElementById('pr-title').value=p.title;
+  document.getElementById('pr-sev').value=p.severity;
+  document.getElementById('pr-desc').value=p.desc||'';
+  document.getElementById('pr-status').value=p.status;
+  document.getElementById('pr-repair').value=p.repairHrs||'';
+  document.getElementById('mo-prob').classList.add('open');
+}
+
+async function saveProb() {
+  const title=document.getElementById('pr-title').value.trim();
+  if(!title){showToast('กรุณาใส่หัวข้อปัญหา','error');return;}
+  const eid=document.getElementById('prob-edit-id').value;
+  const obj={
+    id:eid||genId(),
+    agvId:document.getElementById('pr-agv').value,
+    date:document.getElementById('pr-date').value,
+    title, severity:document.getElementById('pr-sev').value,
+    desc:document.getElementById('pr-desc').value,
+    status:document.getElementById('pr-status').value,
+    repairHrs:document.getElementById('pr-repair').value||null
+  };
+  showLoading(true); setLoadingMsg('กำลังบันทึกปัญหา...');
+  try {
+    if (eid) {
+      const i=_cache.problems.findIndex(p=>p.id===eid);
+      if(i>=0) _cache.problems[i]=obj;
+      await apiWrite('problems', _cache.problems);
+    } else {
+      _cache.problems.unshift(obj);
+      await apiAppend('problems', obj);
+    }
+    closeMo('mo-prob'); renderProblems(); updateBadges();
+    showToast('บันทึกปัญหาสำเร็จ','success');
+  } catch(e) {
+    showToast('บันทึกไม่สำเร็จ: '+e.message,'error');
+  } finally { showLoading(false); }
+}
+
+async function toggleProb(id) {
+  const p=_cache.problems.find(x=>x.id===id); if(!p) return;
+  p.status=p.status==='resolved'?'open':'resolved';
+  showLoading(true); setLoadingMsg('กำลังอัปเดต...');
+  try {
+    await apiWrite('problems', _cache.problems);
+    renderProblems(); updateBadges();
+  } catch(e) {
+    showToast('อัปเดตไม่สำเร็จ: '+e.message,'error');
+  } finally { showLoading(false); }
+}
+
+async function delProb(id) {
+  if(!confirm('ลบปัญหานี้?')) return;
+  showLoading(true); setLoadingMsg('กำลังลบ...');
+  try {
+    _cache.problems=_cache.problems.filter(p=>p.id!==id);
+    await apiDelete('problems', id);
+    renderProblems(); updateBadges();
+  } catch(e) {
+    showToast('ลบไม่สำเร็จ: '+e.message,'error');
+  } finally { showLoading(false); }
+}
+
+// ══════════════════════════════════════════════
+// AGV MANAGE
+// ══════════════════════════════════════════════
+function renderAGVManage() {
+  const d=GD();
+  document.getElementById('agv-manage-grid').innerHTML=d.agvList.map(agv=>`
+    <div class="agv-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:14px;color:var(--accent)">${escHtml(agv.id)}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${escHtml(agv.name||'—')}</div>
+        </div>
+        <span class="badge ${agv.active?'bg':'br'}">${agv.active?'ใช้งาน':'ปิดการใช้'}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px">
+        📍 ${escHtml(agv.loc||'ไม่ระบุ')}<br>
+        📅 ติดตั้ง: ${escHtml(agv.install||'—')}<br>
+        🔄 รอบ PM: ทุก ${escHtml(String(agv.cycle||7))} วัน
+      </div>
+      <div style="display:flex;gap:5px;margin-top:10px">
+        <button type="button" class="btn btn-secondary btn-xs" onclick="openEditAGV('${escHtml(agv.id)}')">✏️ แก้ไข</button>
+        <button type="button" class="btn btn-primary btn-xs" onclick="showPage('pm-form','${escHtml(agv.id)}')">+ PM</button>
+        <button type="button" class="btn ${agv.active?'btn-danger':'btn-secondary'} btn-xs" onclick="toggleAGV('${escHtml(agv.id)}')">${agv.active?'ปิด':'เปิด'}</button>
+      </div>
+    </div>`).join('');
+}
+
+function openAddAGV() {
+  document.getElementById('mo-agv-title').textContent='🤖 เพิ่ม AGV';
+  document.getElementById('agv-edit-id').value='';
+  ['agv-id-inp','agv-name','agv-loc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('agv-install').value='';
+  document.getElementById('agv-cycle').value='7';
+  document.getElementById('mo-agv').classList.add('open');
+}
+
+function openEditAGV(id) {
+  const d=GD(); const agv=d.agvList.find(a=>a.id===id); if(!agv) return;
+  document.getElementById('mo-agv-title').textContent='✏️ แก้ไข AGV';
+  document.getElementById('agv-edit-id').value=id;
+  document.getElementById('agv-id-inp').value=agv.id;
+  document.getElementById('agv-name').value=agv.name||'';
+  document.getElementById('agv-loc').value=agv.loc||'';
+  document.getElementById('agv-install').value=agv.install||'';
+  document.getElementById('agv-cycle').value=agv.cycle||7;
+  document.getElementById('mo-agv').classList.add('open');
+}
+
+async function saveAGV() {
+  const newId=document.getElementById('agv-id-inp').value.trim();
+  if(!newId){showToast('กรุณาใส่ AGV ID','error');return;}
+  const eid=document.getElementById('agv-edit-id').value;
+  if(!eid && _cache.agvList.find(a=>a.id===newId)){showToast('AGV ID นี้มีอยู่แล้ว','error');return;}
+  const obj={id:newId,name:document.getElementById('agv-name').value,loc:document.getElementById('agv-loc').value,install:document.getElementById('agv-install').value,cycle:parseInt(document.getElementById('agv-cycle').value)||7,active:true};
+  showLoading(true); setLoadingMsg('กำลังบันทึก AGV...');
+  try {
+    if(eid){const i=_cache.agvList.findIndex(a=>a.id===eid);if(i>=0)_cache.agvList[i]={..._cache.agvList[i],...obj};}
+    else _cache.agvList.push(obj);
+    await apiWrite('agvList', _cache.agvList);
+    closeMo('mo-agv'); renderAGVManage(); populateAGVSelects();
+    showToast('บันทึก AGV สำเร็จ','success');
+  } catch(e) {
+    showToast('บันทึกไม่สำเร็จ: '+e.message,'error');
+  } finally { showLoading(false); }
+}
+
+async function toggleAGV(id) {
+  const agv=_cache.agvList.find(a=>a.id===id); if(!agv) return;
+  agv.active=!agv.active;
+  showLoading(true); setLoadingMsg('กำลังอัปเดต...');
+  try {
+    await apiWrite('agvList', _cache.agvList);
+    renderAGVManage(); populateAGVSelects();
+  } catch(e) {
+    showToast('อัปเดตไม่สำเร็จ: '+e.message,'error');
+  } finally { showLoading(false); }
+}
+
+// ══════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════
+function renderStats() {
+  const d=GD();
+  const agvIds=d.agvList.filter(a=>a.active).map(a=>a.id);
+  const resolvedProbs=d.problems.filter(p=>p.status==='resolved'&&p.repairHrs);
+  const totalRepairHrs=resolvedProbs.reduce((a,p)=>a+parseFloat(p.repairHrs||0),0);
+  const mttr=resolvedProbs.length?+(totalRepairHrs/resolvedProbs.length).toFixed(1):null;
+  // MTBF estimate: total operating period / number of failures
+  const allProbs=d.problems.length;
+  const firstDate=d.records.length?new Date(d.records[d.records.length-1].date):null;
+  const lastDate=d.records.length?new Date(d.records[0].date):null;
+  const days=firstDate&&lastDate?(lastDate-firstDate)/86400000:0;
+  const mtbf=allProbs&&days?+(days*24/allProbs).toFixed(1):null;
+  const avail=mtbf&&mttr?+(mtbf/(mtbf+mttr)*100).toFixed(1):null;
+  document.getElementById('st-mtbf').textContent=mtbf??'—';
+  document.getElementById('st-mttr').textContent=mttr??'—';
+  document.getElementById('st-avail').textContent=avail??'—';
+  document.getElementById('st-total-p').textContent=d.problems.length;
+
+  // Per-AGV MTBF table
+  document.getElementById('mtbf-table').innerHTML=`<table><thead><tr><th>AGV</th><th>ปัญหาทั้งหมด</th><th>แก้ไขแล้ว</th><th>MTTR (ชม.)</th><th>PM ทั้งหมด</th></tr></thead><tbody>${
+    agvIds.map(id=>{
+      const probs=d.problems.filter(p=>p.agvId===id);
+      const res=probs.filter(p=>p.status==='resolved'&&p.repairHrs);
+      const mttri=res.length?+(res.reduce((a,p)=>a+parseFloat(p.repairHrs),0)/res.length).toFixed(1):null;
+      const pmcnt=d.records.filter(r=>r.agvId===id).length;
+      return `<tr><td><span class="badge bb">${id}</span></td><td>${probs.length}</td><td>${res.length}</td><td>${mttri??'—'}</td><td>${pmcnt}</td></tr>`;
+    }).join('')
+  }</tbody></table>`;
+
+  // Problem types (by severity)
+  const hi=d.problems.filter(p=>p.severity==='high').length;
+  const me=d.problems.filter(p=>p.severity==='medium').length;
+  const lo=d.problems.filter(p=>p.severity==='low').length;
+  const maxP=Math.max(1,hi,me,lo);
+  document.getElementById('prob-type-chart').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[['🔴 สูง',hi,'var(--danger)'],['🟡 กลาง',me,'var(--warning)'],['🟢 ต่ำ',lo,'var(--success)']].map(([lbl,cnt,col])=>`
+      <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>${lbl}</span><span style="font-weight:700">${cnt}</span></div>
+      <div class="pb"><div class="pf" style="width:${Math.round(cnt/maxP*100)}%;background:${col}"></div></div></div>`).join('')}
+    </div>`;
+
+  // Fail items
+  const failCounts={};
+  d.records.forEach(r=>{r.checks.filter(c=>c.status==='fail').forEach(c=>{failCounts[c.id]=(failCounts[c.id]||0)+1;});});
+  const sorted=Object.entries(failCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxF=Math.max(1,...sorted.map(x=>x[1]));
+  document.getElementById('fail-items-chart').innerHTML=sorted.length?sorted.map(([id,cnt])=>{
+    const item=CL.find(c=>c.id==id);
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span style="color:var(--text2)">ข้อ ${id}: ${item?.text.slice(0,50)}…</span>
+        <span style="font-weight:700;color:var(--danger)">${cnt} ครั้ง</span>
+      </div>
+      <div class="pb"><div class="pf" style="width:${Math.round(cnt/maxF*100)}%;background:var(--danger)"></div></div>
+    </div>`;
+  }).join(''):'<div style="color:var(--text3);text-align:center;padding:20px">ยังไม่มีรายการที่ไม่ผ่าน</div>';
+}
+// QR removed: functionality disabled because not used in production
+
+// ══════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════
+function getExportRecs(moId, agvId) {
+  const d=GD(); const mo=document.getElementById(moId)?.value||''; const agv=document.getElementById(agvId)?.value||'';
+  let r=[...d.records];
+  if(mo) r=r.filter(x=>x.date.startsWith(mo));
+  if(agv) r=r.filter(x=>x.agvId===agv);
+  return r;
+}
+
+function exportHTML() {
+  const recs=getExportRecs('ex-html-mo','ex-html-agv');
+  const blob=new Blob([buildReportHTML(recs)],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`AGV_PM_${new Date().toISOString().slice(0,10)}.html`;a.click();
+  showToast('Export HTML สำเร็จ','success');
+}
+
+function exportPDF() {
+  const recs=getExportRecs('ex-mo','ex-agv');
+  const w=window.open('','_blank');w.document.write(buildReportHTML(recs));w.document.close();w.onload=()=>w.print();
+  showToast('เปิดหน้าพิมพ์แล้ว','info');
+}
+
+function exportCSV() {
+  const recs=getExportRecs('ex-csv-mo','ex-csv-agv');
+  const BOM='\uFEFF';
+  const hdr=['วันที่','เวลา','AGV ID','ช่าง','ประเภท','ผ่าน','ไม่ผ่าน','สถานะ','หมายเหตุ','Runtime hrs'].join(',');
+  const rows=recs.map(r=>[r.date,r.time||'',r.agvId,r.technician,r.type,r.passed,r.failed,r.status,(r.note||'').replace(/,/g,';'),r.hrs||''].join(','));
+  const csv=BOM+hdr+'\n'+rows.join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`AGV_PM_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  showToast('Export CSV สำเร็จ','success');
+}
+
+function buildReportHTML(recs) {
+  return `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>AGV PM Report</title>
+<style>body{font-family:'Sarabun',sans-serif;max-width:960px;margin:0 auto;padding:20px;color:#1c2128}
+h1{color:#0d1117;border-bottom:3px solid #00d4aa;padding-bottom:8px}
+.bg{background:#d4edda;color:#155724;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;display:inline-block}
+.br{background:#f8d7da;color:#721c24;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;display:inline-block}
+.by{background:#fff3cd;color:#856404;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;display:inline-block}
+.bb{background:#cce5ff;color:#004085;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;display:inline-block}
+table{width:100%;border-collapse:collapse;margin:12px 0}th,td{border:1px solid #dee2e6;padding:8px 12px;font-size:13px}
+th{background:#f8f9fa;font-weight:700}tr:nth-child(even) td{background:#f8f9fa}
+.rec{page-break-inside:avoid;margin-bottom:20px;border:1px solid #dee2e6;border-radius:8px;padding:16px}
+.sig{max-height:60px;border:1px dashed #ccc;border-radius:4px}
+@media print{body{max-width:100%}}</style></head><body>
+<h1>📋 รายงาน AGV PM System</h1>
+<p>สร้างเมื่อ: ${new Date().toLocaleString('th-TH')} | จำนวน ${recs.length} รายการ</p>
+<table><thead><tr><th>วันที่</th><th>AGV</th><th>ช่าง</th><th>ประเภท</th><th>ผ่าน</th><th>ไม่ผ่าน</th><th>สถานะ</th></tr></thead>
+<tbody>${recs.map(r=>`<tr><td>${r.date}</td><td>${r.agvId}</td><td>${r.technician}</td><td>${r.type||''}</td>
+<td><span class="bg">${r.passed}</span></td><td><span class="${r.failed>0?'br':'bg'}">${r.failed}</span></td>
+<td><span class="${r.status==='ผ่าน'?'bg':r.status==='มีปัญหา'?'br':'by'}">${r.status}</span></td></tr>`).join('')}</tbody></table>
+${recs.map(r=>`<div class="rec"><h3>${r.date} ${r.time||''} · ${r.agvId} · ${r.technician}</h3>
+<p>ประเภท: ${r.type||''} | Runtime: ${r.hrs||'—'} hrs | สถานะ: <span class="${r.status==='ผ่าน'?'bg':r.status==='มีปัญหา'?'br':'by'}">${r.status}</span></p>
+${r.note?`<p>หมายเหตุ: ${r.note}</p>`:''}
+<table><thead><tr><th>#</th><th>รายการ</th><th>ผล</th><th>หมายเหตุ</th></tr></thead>
+<tbody>${r.checks.map(c=>`<tr><td>${c.id}</td><td>${c.text}</td>
+<td><span class="${c.status==='ok'?'bg':c.status==='fail'?'br':'by'}">${c.status==='ok'?'ผ่าน':c.status==='fail'?'ไม่ผ่าน':c.status==='na'?'ไม่ได้ตรวจ':'—'}</span></td>
+<td>${c.note||'—'}</td></tr>`).join('')}</tbody></table>
+${r.sig1||r.sig2?`<div style="display:flex;gap:20px;margin-top:12px">
+  ${r.sig1?`<div><p style="font-size:12px">ลายเซ็นช่าง:</p><img src="${r.sig1}" class="sig"></div>`:''}
+  ${r.sig2?`<div><p style="font-size:12px">ลายเซ็นผู้อนุมัติ:</p><img src="${r.sig2}" class="sig"></div>`:''}
+</div>`:''}
+${r.images?.length?`<div style="margin-top:12px"><p style="font-size:12px">รูปถ่าย:</p><div style="display:flex;gap:8px;flex-wrap:wrap">${r.images.map(img=>`<img src="${img}" style="width:80px;height:80px;object-fit:cover;border-radius:4px">`).join('')}</div></div>`:''}
+</div>`).join('')}
+</body></html>`;
+}
+
+// ══════════════════════════════════════════════
+// BACKUP / RESTORE
+// ══════════════════════════════════════════════
+function renderBackupInfo() {
+  const d=GD();
+  const size=(JSON.stringify(d).length/1024).toFixed(1);
+  document.getElementById('bk-info').innerHTML=`📦 PM: ${d.records.length} รายการ · ปัญหา: ${d.problems.length} รายการ · AGV: ${d.agvList.length} เครื่อง · ขนาด: ~${size} KB · <span style="color:var(--accent)">☁️ Google Sheets</span>`;
+  document.getElementById('bk-history').innerHTML=d.backups.length
+    ?d.backups.slice(0,8).map(b=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-size:13px;font-weight:600">${escHtml(b.filename)}</div><div style="font-size:11px;color:var(--text3)">${new Date(b.date).toLocaleString('th-TH')}</div></div>
+      <span class="badge bb">${(b.size/1024).toFixed(1)} KB</span>
+    </div>`).join('')
+    :'<div style="color:var(--text3);font-size:13px;padding:16px 0">ยังไม่มีประวัติ</div>';
+}
+
+async function backupData() {
+  const d=GD(); const json=JSON.stringify(d,null,2);
+  const fn=`AGV_PM_Backup_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.json`;
+  // Download locally
+  const blob=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;a.click();
+  // Log to Sheets
+  const entry={filename:fn,date:new Date().toISOString(),size:json.length};
+  _cache.backups.unshift(entry);
+  if(_cache.backups.length>20) _cache.backups=_cache.backups.slice(0,20);
+  try { await apiAppend('backups', entry); } catch(_){}
+  renderBackupInfo();
+  showToast('Backup สำเร็จ: '+fn,'success');
+}
+
+async function restoreData() {
+  const file=document.getElementById('r-file').files[0]; if(!file){showToast('เลือกไฟล์ก่อน','error');return;}
+  const r=new FileReader();
+  r.onload=async e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data || typeof data !== 'object') throw new Error('ไม่ใช่ JSON object');
+      if(!Array.isArray(data.records))  throw new Error('ไม่พบ records array');
+      if(!Array.isArray(data.agvList))  throw new Error('ไม่พบ agvList array');
+      if(!Array.isArray(data.problems)) data.problems=[];
+      if(!Array.isArray(data.backups))  data.backups=[];
+      if(!confirm(`Restore ข้อมูล?\nPM: ${data.records.length} รายการ\nAGV: ${data.agvList.length}\n\n⚠️ ข้อมูลใน Google Sheets จะถูกแทนที่ทั้งหมด`))return;
+      showLoading(true); setLoadingMsg('กำลัง Restore ข้อมูลไปยัง Google Sheets...');
+      await Promise.all([
+        apiWrite('records',  data.records),
+        apiWrite('problems', data.problems),
+        apiWrite('agvList',  data.agvList),
+      ]);
+      _cache = data;
+      renderBackupInfo(); renderDashboard();
+      showToast(`Restore สำเร็จ! PM ${data.records.length} รายการ`,'success');
+    }catch(err){
+      showToast('ผิดพลาด: '+err.message,'error');
+    } finally { showLoading(false); }
+  };
+  r.readAsText(file);
+}
+
+async function clearAll() {
+  if(!confirm('⚠️ ลบข้อมูลทั้งหมดใน Google Sheets?'))return;
+  if(!confirm('ยืนยัน: ข้อมูลทั้งหมดจะถูกลบถาวรจาก Google Sheets จริงหรือไม่?'))return;
+  showLoading(true); setLoadingMsg('กำลังลบข้อมูล...');
+  try {
+    const emptyAgv = DEFAULT_AGV.map(id=>({id,name:'',loc:'',install:'',cycle:7,active:true}));
+    await Promise.all([
+      apiWrite('records',[]),
+      apiWrite('problems',[]),
+      apiWrite('agvList', emptyAgv),
+    ]);
+    _cache = { records:[], problems:[], agvList:emptyAgv, backups:[] };
+    renderBackupInfo(); renderDashboard();
+    showToast('ล้างข้อมูลทั้งหมดแล้ว','info');
+  } catch(e) {
+    showToast('ลบไม่สำเร็จ: '+e.message,'error');
+  } finally { showLoading(false); }
+}
+
+// ══════════════════════════════════════════════
+// BADGES & NOTIFICATIONS
+// ══════════════════════════════════════════════
+function updateBadges() {
+  const open=_cache.problems.filter(p=>p.status!=='resolved').length;
+  ['prob-badge','mn-prob-badge'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.textContent=open; el.style.display=open>0?'':'none';
+  });
+}
+
+// Warn before leaving unsaved PM form
+window.addEventListener('beforeunload', e => {
+  const hasData = document.getElementById('f-tech')?.value || document.getElementById('f-agv')?.value;
+  const activePage = document.querySelector('.page.active')?.id;
+  if (activePage === 'page-pm-form' && hasData) { e.preventDefault(); e.returnValue = ''; }
+});
+
+// ══════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════
+function closeMo(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)closeMo(o.id);});});
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(msg,type='info') {
+  const icons={success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
+  const t=document.createElement('div'); t.className=`toast ${type}`;
+  t.innerHTML=`<span>${icons[type]}</span><span>${msg}</span>`;
+  document.getElementById('tc').appendChild(t);
+  setTimeout(()=>t.remove(),3800);
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+async function init() {
+  // Theme
+  const theme=localStorage.getItem('agv_theme');
+  if(theme==='light'){isDark=false;document.body.classList.add('light');document.getElementById('ti').textContent='🌙';document.getElementById('tt').textContent='โหมด Dark';}
+
+  // Init forms
+  document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('f-time').value=new Date().toTimeString().slice(0,5);
+  document.getElementById('ex-mo').value=new Date().toISOString().slice(0,7);
+  document.getElementById('ex-html-mo').value=new Date().toISOString().slice(0,7);
+  document.getElementById('ex-csv-mo').value=new Date().toISOString().slice(0,7);
+  document.getElementById('pr-date').value=new Date().toISOString().split('T')[0];
+
+  // Init signatures & checklist (no data needed)
+  initSig(1); initSig(2);
+  renderCL();
+
+  // ── Load all data from Google Sheets ──
+  await loadAllFromSheets();
+
+  // Populate selects and render UI with real data
+  populateAGVSelects();
+  renderDashboard();
+  updateBadges();
+
+  // Handle QR deep link ?agv=...
+  const params=new URLSearchParams(window.location.search);
+  const agvParam=params.get('agv');
+  if(agvParam){ showPage('pm-form',agvParam); showToast('เปิดฟอร์ม PM สำหรับ '+agvParam,'info'); }
+}
+
+init();
+</script>
+
+
+</body></html>
